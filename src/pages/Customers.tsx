@@ -1,11 +1,47 @@
 import React from "react";
 import ComGrid from "@/components/common/ComGrid";
-import type { Action } from "@/components/common/ComGrid";
+import { Button } from "@/components/ui/button";
+import ActionButtonsRenderer from "@/components/common/ActionButtonsRenderer";
+// import CustomHeader from "@/components/common/CustomHeader";
+// import type { Action } from "@/components/common/ComGrid";
 
 const userColumns = [
-  { headerName: "ID", field: "id", sortable: true, filter: true, flex: 1 },
-  { headerName: "Name", field: "name", sortable: true, filter: true, flex: 1 },
-  { headerName: "Email", field: "email", sortable: true, filter: true, flex: 1 },
+  {
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    filter: false,
+    floatingFilter: false,
+    resizable: false,
+    sortable: false,
+    width: 20,
+    cellStyle: { textAlign: "left", paddingRight: "0px" },
+  },
+  {
+    headerName: "ID",
+    field: "id",
+    flex: 1,
+    unSortIcon: true,
+    cellStyle: { textAlign: "left", paddingLeft: "5px" },
+    headerClass:
+      "[&_.ag-header-cell-label]:justify-start flex justify-start ag-header-cell-text padding-left-0",
+    // headerComponent: CustomHeader,
+  },
+  { headerName: "Name", field: "name", flex: 1, unSortIcon: true },
+  {
+    headerName: "Email",
+    field: "email",
+    unSortIcon: true,
+    flex: 1,
+  },
+  {
+    headerName: "Actions",
+    field: "actions",
+    cellRenderer: ActionButtonsRenderer,
+    headerClass:
+      "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-0",
+    width: 160,
+    cellStyle: { textAlign: "center" },
+  }
 ];
 
 const userData = [
@@ -22,59 +58,50 @@ const userData = [
   { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
 ];
 
-const actions: Action[] = [
-  {
-    label: "Edit",
-    variant: "outline",
-    onClick: (row: Record<string, unknown>) => {
-      alert(`Edit user: ${row.name}`);
-    },
-  },
-  {
-    label: "Delete",
-    variant: "destructive",
-    onClick: (row: Record<string, unknown>) => {
-      alert(`Delete user: ${row.name}`);
-    },
-  },
-];
-
 const Customers: React.FC = () => {
   const [selectedRows, setSelectedRows] = React.useState<
     Record<string, unknown>[]
   >([]);
 
-  const bulkActions: Action[] = [
-    {
-      label: "Filter",
-      variant: "outline",
-      onClick: (row: Record<string, unknown>) => {
-        alert(`Delete user: ${row.name}`);
-      },
-      disabled: selectedRows.length !== 0,
-    },
-    {
-      label: "Delete Selected",
-      variant: "destructive",
-      onClick: (row: Record<string, unknown>) => {
-        alert(`Delete user: ${row.name}`);
-      },
-      disabled: selectedRows.length === 0,
-    },
-  ];
-
   return (
-    <div className="p-6">
+    <div className="">
       {/* <h1 className="text-2xl font-bold mb-4">Customers</h1> */}
       <ComGrid
-        columns={userColumns}
+        columnDefs={userColumns}
         rowData={userData}
-        actions={actions}
         title="Customer List"
         checkboxSelection
+        rowSelection="multiple"
         pagination
         pageSize={10}
-        bulkActions={bulkActions}
+        metaData={{
+          total: userData.length,
+          pageSize: 20,
+          current: 1,
+        }}
+        bulkActionButtons={
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              // label="Copy"
+              // disabled={selectedRow.length !== 1 || currentEdit.isEditing}
+              // onClick={onCopy}
+            >
+              Copy
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              // label="New"
+              // disabled={currentEdit.isEditing}
+              // onClick={onNew}
+            >
+              New
+            </Button>
+          </>
+        }
+        // bulkActions={bulkActions}
         onSelectionChange={setSelectedRows}
       />
     </div>
