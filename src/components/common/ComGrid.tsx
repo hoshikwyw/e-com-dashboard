@@ -34,13 +34,22 @@ type RowConfirmProps<T> = {
   }) => void;
 };
 
+type HeaderContentProps = {
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+};
+
 type AgGridProps<T> = {
   rowData: T[];
   columnDefs: ColDef<T>[];
   isFetching?: boolean;
   expanded?: boolean;
+  // Deprecated: Use headerContent instead
   title?: string;
+  // Deprecated: Use headerContent instead
   bulkActionButtons?: React.ReactNode;
+  // New flexible header content
+  headerContent?: HeaderContentProps;
   autoSelectFirstRow?: boolean;
   gridClassName?: string;
   onPageChanged?: (params: {
@@ -71,8 +80,11 @@ const ComGrid = forwardRef(
       rowData,
       columnDefs,
       isFetching,
+      // Deprecated props
       title,
       bulkActionButtons,
+      // New flexible header
+      headerContent,
       autoSelectFirstRow,
       onPageChanged,
       metaData,
@@ -99,8 +111,6 @@ const ComGrid = forwardRef(
 
     // Only show pagination if metaData exists and has values
     const showPagination = metaData;
-    console.log("showPagination", showPagination);
-    console.log("metaData", metaData);
 
     useEffect(() => {
       if (metaData?.current) {
@@ -205,20 +215,34 @@ const ComGrid = forwardRef(
       return pages;
     };
 
+    // Determine header content based on props
+    const renderHeaderContent = () => {
+      // If headerContent is provided, use that
+      if (headerContent) {
+        return (
+          <>
+            <div className="flex items-center gap-2">{headerContent.left}</div>
+            <div className="flex items-center gap-2">{headerContent.right}</div>
+          </>
+        );
+      }
+
+      // Fallback to legacy props for backward compatibility
+      return (
+        <>
+          <h3 className="font-medium text-[18px]">{title}</h3>
+          <div className="flex items-center gap-2">{bulkActionButtons}</div>
+        </>
+      );
+    };
+
     return (
       <div
-        className={` w-full h-full bg-background rounded-t-[8px]`}
+        className={`w-full h-full bg-background rounded-t-[8px]`}
         style={{ height: height || "400px", width: "100%" }}
       >
-        <div
-          className=" w-full flex items-center justify-between px-4 py-4"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <h3 className=" font-medium text-[18px]">{title}</h3>
-          <div className=" flex items-center gap-2">{bulkActionButtons}</div>
+        <div className="w-full flex items-center justify-between px-4 py-4">
+          {renderHeaderContent()}
         </div>
 
         <AgGridReact<T>
@@ -244,15 +268,16 @@ const ComGrid = forwardRef(
           onRowDoubleClicked={onRowDoubleClicked}
           suppressCopyRowsToClipboard={props.suppressCopyAction}
         />
+
         {/* Pagination */}
         {showPagination && (
-          <div className=" w-full flex items-center justify-between px-4 py-4 bg-background border-t border-border rounded-b-[8px]">
+          <div className="w-full flex items-center justify-between px-4 py-4 bg-background border-t border-border rounded-b-[8px]">
             <div>
-              <span className=" font-medium text-sm text-black-500">
+              <span className="font-medium text-sm text-black-500">
                 Showing 1 - 10 from {totalItems}
               </span>
             </div>
-            <div className=" flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Button
                 size="sm"
                 variant="accent"

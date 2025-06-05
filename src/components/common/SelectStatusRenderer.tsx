@@ -1,31 +1,40 @@
 import React from "react";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SelectStatusRendererProps {
-  value?: any; // Current cell value (from AG-Grid)
-  data?: any; // The entire row data (from AG-Grid)
-  api?: any; // AG-Grid API
-  context?: any; // AG-Grid context
+  value?: any;
+  data?: any;
+  api?: any;
+  context?: any;
+  node?: any;
+  column?: any;
+  rowIndex?: number;
 }
 
 const SelectStatusRenderer: React.FC<SelectStatusRendererProps> = (props) => {
   const statusOptions = [
-    { value: "pending", label: "Pending", color: "#fef08a" },
-    { value: "approved", label: "Approved", color: "#86efac" },
-    { value: "rejected", label: "Rejected", color: "#fca5a5" },
-    { value: "in_progress", label: "In Progress", color: "#93c5fd" },
+    { value: "pending", label: "Pending", variant: "default" as const },
+    { value: "completed", label: "Completed", variant: "success" as const },
+    { value: "failed", label: "Failed", variant: "primary" as const },
+    { value: "porcessing", label: "Processing", variant: "secondary" as const },
   ];
 
-  const [selectedValue, setSelectedValue] = React.useState<string | number>(
+  const [selectedValue, setSelectedValue] = React.useState<string>(
     props.value || statusOptions[0]?.value || ""
   );
 
   const selectedOption = statusOptions.find(
     (option) => option.value === selectedValue
   );
-  const selectedColor = selectedOption?.color || "#e2e8f0";
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
+  const handleChange = (value: string) => {
     setSelectedValue(value);
 
     // Update the cell value in AG-Grid
@@ -39,25 +48,29 @@ const SelectStatusRenderer: React.FC<SelectStatusRendererProps> = (props) => {
     }
   };
 
-  const selectStyle = {
-    backgroundColor: selectedColor,
-    transition: "background-color 0.3s ease",
-    padding: "0.25rem 0.5rem",
-    borderRadius: "0.25rem",
-    border: "1px solid #cbd5e0",
-    outline: "none",
-    cursor: "pointer",
-    width: "100%",
-  };
-
   return (
-    <select value={selectedValue} onChange={handleChange} style={selectStyle}>
-      {statusOptions.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+    <Select value={selectedValue} onValueChange={handleChange}>
+      <SelectTrigger className="h-8 border-none p-0 focus:ring-0 focus:ring-offset-0">
+        <SelectValue asChild>
+          {selectedOption ? (
+            <Badge variant={selectedOption.variant} className="min-w-[80px]">
+              {selectedOption.label}
+            </Badge>
+          ) : (
+            <span>Select</span>
+          )}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {statusOptions.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            <Badge variant={option.variant} className="w-full justify-center">
+              {option.label}
+            </Badge>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 };
 

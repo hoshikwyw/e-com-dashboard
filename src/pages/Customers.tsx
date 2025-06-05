@@ -3,6 +3,9 @@ import ComGrid from "@/components/common/ComGrid";
 import { Button } from "@/components/ui/button";
 import ActionButtonsRenderer from "@/components/common/ActionButtonsRenderer";
 import SelectStatusRenderer from "@/components/common/SelectStatusRenderer";
+import { Badge } from "lucide-react";
+import { Input } from "@/components/common/Input";
+import { SearchInput } from "@/components/common/SearchInput";
 // import CustomHeader from "@/components/common/CustomHeader";
 // import type { Action } from "@/components/common/ComGrid";
 
@@ -55,14 +58,23 @@ const Customers: React.FC = () => {
       unSortIcon: true,
       cellStyle: { textAlign: "left", paddingLeft: "5px" },
       headerClass:
-        "[&_.ag-header-cell-label]:justify-start flex justify-start ag-header-cell-text padding-left-0",
+        "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-0",
       // headerComponent: CustomHeader,
     },
-    { headerName: "Name", field: "name", flex: 1, unSortIcon: true },
+    {
+      headerName: "Name",
+      field: "name",
+      flex: 1,
+      unSortIcon: true,
+      headerClass:
+        "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-0",
+    },
     {
       headerName: "Email",
       field: "email",
       unSortIcon: true,
+      headerClass:
+        "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-0",
       flex: 1,
     },
     {
@@ -73,6 +85,8 @@ const Customers: React.FC = () => {
       flex: 1,
       editable: true, // Add this to make the cell editable
       cellEditor: "agSelectCellEditor", // Optional: if you want AG-Grid's select editor
+      headerClass:
+        "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-0",
       cellEditorParams: {
         // Optional parameters for the editor
         values: ["pending", "approved", "rejected", "in_progress"],
@@ -88,6 +102,18 @@ const Customers: React.FC = () => {
       cellStyle: { textAlign: "center" },
     },
   ];
+
+  // Define your bulk actions component
+  const bulkActions = (
+    <>
+      <Button variant="outline" size="sm" disabled={selectedRows.length !== 1}>
+        Copy
+      </Button>
+      <Button variant="default" size="sm">
+        New
+      </Button>
+    </>
+  );
 
   return (
     <div className="">
@@ -105,29 +131,51 @@ const Customers: React.FC = () => {
           pageSize: 20,
           current: 1,
         }}
-        bulkActionButtons={
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              // label="Copy"
-              // disabled={selectedRow.length !== 1 || currentEdit.isEditing}
-              // onClick={onCopy}
-            >
-              Copy
-            </Button>
-            <Button
-              variant="default"
-              size="sm"
-              // label="New"
-              // disabled={currentEdit.isEditing}
-              // onClick={onNew}
-            >
-              New
-            </Button>
-          </>
-        }
+        // bulkActionButtons={
+        //   <>
+        //     <Button
+        //       variant="outline"
+        //       size="sm"
+        //       // label="Copy"
+        //       // disabled={selectedRow.length !== 1 || currentEdit.isEditing}
+        //       // onClick={onCopy}
+        //     >
+        //       Copy
+        //     </Button>
+        //     <Button
+        //       variant="default"
+        //       size="sm"
+        //       // label="New"
+        //       // disabled={currentEdit.isEditing}
+        //       // onClick={onNew}
+        //     >
+        //       New
+        //     </Button>
+        //   </>
+        // }
+        // headerContent={{
+        //   left: (
+        //     <div className="flex items-center gap-2">
+        //       <h3>Users</h3>
+        //       <Badge />
+        //     </div>
+        //   ),
+        //   right: bulkActions,
+        // }}
         // bulkActions={bulkActions}
+        headerContent={{
+          left: (
+            <div>
+              <SearchInput
+                onSearch={(value) => {
+                  console.log(value);
+                }}
+                isLoading={false}
+              />
+            </div>
+          ),
+          right: bulkActions,
+        }}
         onSelectionChange={setSelectedRows}
       />
     </div>
