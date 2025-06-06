@@ -17,7 +17,7 @@ import React, {
   useState,
 } from "react";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, icons } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // Register only community modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -44,11 +44,8 @@ type AgGridProps<T> = {
   columnDefs: ColDef<T>[];
   isFetching?: boolean;
   expanded?: boolean;
-  // Deprecated: Use headerContent instead
   title?: string;
-  // Deprecated: Use headerContent instead
   bulkActionButtons?: React.ReactNode;
-  // New flexible header content
   headerContent?: HeaderContentProps;
   autoSelectFirstRow?: boolean;
   gridClassName?: string;
@@ -80,10 +77,8 @@ const ComGrid = forwardRef(
       rowData,
       columnDefs,
       isFetching,
-      // Deprecated props
       title,
       bulkActionButtons,
-      // New flexible header
       headerContent,
       autoSelectFirstRow,
       onPageChanged,
@@ -102,65 +97,48 @@ const ComGrid = forwardRef(
 
     const [selectedRow, setSelectedRow] = useState<T | null>(null);
     const [gridApi, setGridApi] = useState<GridApi | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
-    // Calculate pagination values only if metaData exists
-    const pageSize = metaData?.pageSize || 20;
-    const totalItems = metaData?.total || 0;
-    const totalPages = metaData ? Math.ceil(totalItems / pageSize) : 0;
-    const [currentPage, setCurrentPage] = useState(metaData?.current || 1);
-
-    // Only show pagination if metaData exists and has values
-    const showPagination = metaData;
-
+    // Calculate pagination values based on metaData or defaults
     useEffect(() => {
-      if (metaData?.current) {
-        setCurrentPage(metaData.current);
+      if (metaData) {
+        setCurrentPage(metaData.current || 1);
+        setPageSize(metaData.pageSize || 10);
       }
-    }, [metaData?.current]);
+    }, [metaData]);
 
-    // Only trigger page change if metaData exists
-    useEffect(() => {
-      if (metaData && onPageChanged) {
-        onPageChanged({
-          current: currentPage,
-          pageSize,
-          total: totalItems,
-        });
-      }
-    }, [currentPage, metaData, onPageChanged, pageSize, totalItems]);
+    const totalItems = metaData?.total || rowData.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const showPagination = !!metaData || rowData.length > pageSize;
 
-    const prevSelectedRowRef = useRef<T | null>(null);
+    // Handle page changes
+    const handlePageChange = (newPage: number) => {
+      const validatedPage = Math.max(1, Math.min(newPage, totalPages));
+      setCurrentPage(validatedPage);
 
-    useEffect(() => {
-      if (isSaved && gridApi) {
-        gridApi.refreshCells({ force: true });
-      }
-    }, [isSaved, gridApi]);
-
-    useEffect(() => {
       if (onPageChanged) {
         onPageChanged({
-          current: currentPage,
+          current: validatedPage,
           pageSize,
           total: totalItems,
         });
       }
-    }, [currentPage, pageSize, totalItems, onPageChanged]);
+    };
 
+    // Handle grid ready
     const handleGridReady = (params: GridReadyEvent) => {
       setGridApi(params.api);
       params.api.sizeColumnsToFit();
 
-      if (autoSelectFirstRow) {
-        const firstRow = rowData[0];
-        if (firstRow) {
-          params.api.getDisplayedRowAtIndex(0)?.setSelected(true);
-          setSelectedRow(firstRow);
-          if (onRowSelected) onRowSelected(firstRow);
-        }
+      if (autoSelectFirstRow && rowData.length > 0) {
+        params.api.getDisplayedRowAtIndex(0)?.setSelected(true);
+        setSelectedRow(rowData[0]);
+        if (onRowSelected) onRowSelected(rowData[0]);
       }
     };
 
+    // Handle selection changes
     const onSelectionChanged = (event: SelectionChangedEvent) => {
       const selected = event.api.getSelectedRows()[0];
       if (selected) {
@@ -169,6 +147,7 @@ const ComGrid = forwardRef(
       }
     };
 
+    // Handle cell editing
     const onCellEditStopped = (event: CellEditingStoppedEvent) => {
       const { data, colDef, newValue } = event;
       if (colDef.field && onCellValueChanged) {
@@ -176,38 +155,83 @@ const ComGrid = forwardRef(
       }
     };
 
+    // Expose API methods
     useImperativeHandle(ref, () => ({
       getSelectedRows: () => gridApi?.getSelectedRows() || [],
+      getGridApi: () => gridApi,
     }));
 
-    // Optimized pagination rendering - only show relevant page numbers
-    const renderPageNumbers = () => {
-      if (!metaData) return null;
+    // Calculate paginated data if not using server-side pagination
+    const getPaginatedData = () => {
+      if (metaData) {
+        // Server-side pagination - use all rowData
+        return rowData;
+      }
+      // Client-side pagination
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      return rowData.slice(startIndex, endIndex);
+    };
 
+    // Render page numbers
+    const renderPageNumbers = () => {
       const pages = [];
       const maxVisiblePages = 5;
       let startPage = Math.max(
         1,
         currentPage - Math.floor(maxVisiblePages / 2)
       );
-      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
+      // Adjust if we're at the beginning or end
       if (endPage - startPage + 1 < maxVisiblePages) {
         startPage = Math.max(1, endPage - maxVisiblePages + 1);
       }
 
+      // Always show first page
+      if (startPage > 1) {
+        pages.push(
+          <Button
+            key={1}
+            size="sm"
+            variant={currentPage === 1 ? "default" : "accent"}
+            onClick={() => handlePageChange(1)}
+          >
+            1
+          </Button>
+        );
+        if (startPage > 2) {
+          pages.push(<span key="start-ellipsis">...</span>);
+        }
+      }
+
+      // Show visible pages
       for (let i = startPage; i <= endPage; i++) {
         pages.push(
           <Button
             key={i}
             size="sm"
             variant={currentPage === i ? "default" : "accent"}
-            className={`comgrid-pagination-btn ${
-              currentPage === i ? "active" : ""
-            }`}
-            onClick={() => setCurrentPage(i)}
+            onClick={() => handlePageChange(i)}
           >
             {i}
+          </Button>
+        );
+      }
+
+      // Always show last page
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          pages.push(<span key="end-ellipsis">...</span>);
+        }
+        pages.push(
+          <Button
+            key={totalPages}
+            size="sm"
+            variant={currentPage === totalPages ? "default" : "accent"}
+            onClick={() => handlePageChange(totalPages)}
+          >
+            {totalPages}
           </Button>
         );
       }
@@ -215,9 +239,8 @@ const ComGrid = forwardRef(
       return pages;
     };
 
-    // Determine header content based on props
+    // Render header content
     const renderHeaderContent = () => {
-      // If headerContent is provided, use that
       if (headerContent) {
         return (
           <>
@@ -226,8 +249,6 @@ const ComGrid = forwardRef(
           </>
         );
       }
-
-      // Fallback to legacy props for backward compatibility
       return (
         <>
           <h3 className="font-medium text-[18px]">{title}</h3>
@@ -236,9 +257,23 @@ const ComGrid = forwardRef(
       );
     };
 
+    // Calculate showing range
+    const getShowingRange = () => {
+      if (metaData) {
+        const start = (currentPage - 1) * pageSize + 1;
+        const end = Math.min(currentPage * pageSize, totalItems);
+        return `Showing ${start} - ${end} of ${totalItems}`;
+      }
+      const start = (currentPage - 1) * pageSize + 1;
+      const end = Math.min(currentPage * pageSize, rowData.length);
+      return `Showing ${start} - ${end} of ${rowData.length}`;
+    };
+
     return (
       <div
-        className={`w-full h-full bg-background rounded-t-[8px]`}
+        className={`w-full h-full bg-background rounded-t-[8px] ${
+          gridClassName || ""
+        }`}
         style={{ height: height || "400px", width: "100%" }}
       >
         <div className="w-full flex items-center justify-between px-4 py-4">
@@ -247,7 +282,7 @@ const ComGrid = forwardRef(
 
         <AgGridReact<T>
           theme={customGridTheme}
-          rowData={rowData}
+          rowData={getPaginatedData()}
           columnDefs={columnDefs}
           suppressCellFocus={true}
           defaultColDef={{
@@ -259,6 +294,8 @@ const ComGrid = forwardRef(
               justifyContent: "center",
             },
           }}
+          // paginationPageSize={pageSize}
+          // pagination={true}
           rowHeight={50}
           editType="fullRow"
           onGridReady={handleGridReady}
@@ -269,21 +306,19 @@ const ComGrid = forwardRef(
           suppressCopyRowsToClipboard={props.suppressCopyAction}
         />
 
-        {/* Pagination */}
         {showPagination && (
           <div className="w-full flex items-center justify-between px-4 py-4 bg-background border-t border-border rounded-b-[8px]">
             <div>
               <span className="font-medium text-sm text-black-500">
-                Showing 1 - 10 from {totalItems}
+                {getShowingRange()}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
                 variant="accent"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="comgrid-pagination-arrow"
               >
                 <ChevronLeft size={16} strokeWidth="4px" />
               </Button>
@@ -293,11 +328,8 @@ const ComGrid = forwardRef(
               <Button
                 size="sm"
                 variant="accent"
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
+                onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="comgrid-pagination-arrow"
               >
                 <ChevronRight size={16} strokeWidth="4px" />
               </Button>

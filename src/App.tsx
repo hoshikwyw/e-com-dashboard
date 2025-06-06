@@ -28,15 +28,19 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen relative overflow-hidden">
       <Header onToggleSidebar={handleToggleSidebar} />
-      <div className="flex flex-1">
-        <Sidebar
-          open={sidebarOpen}
-          onNavClick={setActiveNav}
-          activeNav={activeNav}
-        />
-        <main className="flex-1 bg-muted p-6">{navComponents[activeNav]}</main>
+      <div className="grid grid-cols-[auto_1fr] h-screen overflow-hidden">
+        <div className="flex-shrink-0">
+          <Sidebar
+            open={sidebarOpen}
+            onNavClick={setActiveNav}
+            activeNav={activeNav}
+          />
+        </div>
+        <main className="flex-1 bg-muted p-6 overflow-y-auto">
+          {navComponents[activeNav]}
+        </main>
       </div>
     </div>
   );

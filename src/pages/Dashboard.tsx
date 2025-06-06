@@ -1,92 +1,25 @@
-import { FilterButton } from "@/components/common/FilterButton";
 import { Input } from "@/components/common/Input";
 import { SearchInput } from "@/components/common/SearchInput";
 import { Badge } from "@/components/ui/badge";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import FilterGroup from "@/components/common/FilterGroup";
+import { ComCheckbox } from "@/components/common/ComCheckbox";
+import { FilterButtonWithState } from "@/components/common/FilterButtonWithState";
+import { DatePicker } from "@/components/common/DatePicker";
+import ProfileCard from "@/components/common/ProfileCard";
 
 const Dashboard = () => {
-  // FilterButton state
-  const [appliedStatusFilter, setAppliedStatusFilter] = React.useState("all");
-  const [appliedSearchQuery, setAppliedSearchQuery] = React.useState("");
-  const [draftStatusFilter, setDraftStatusFilter] = React.useState("all");
-  const [draftSearchQuery, setDraftSearchQuery] = React.useState("");
+  const [isChecked, setIsChecked] = React.useState(false);
 
-  // FilterGroup state
-  const [appliedFilters, setAppliedFilters] = React.useState({
-    status: "all",
-    category: "",
-    dateRange: "",
-  });
-  const [draftFilters, setDraftFilters] = React.useState({
-    status: "all",
-    category: "",
-    dateRange: "",
-  });
-
-  const hasActiveFilters =
-    appliedStatusFilter !== "all" ||
-    !!appliedSearchQuery ||
-    Object.values(appliedFilters).some((val) => val !== "" && val !== "all");
-
-  const handleApplyFilters = () => {
-    setAppliedStatusFilter(draftStatusFilter);
-    setAppliedSearchQuery(draftSearchQuery);
-    setAppliedFilters(draftFilters);
-  };
-
-  const handleCancelFilters = () => {
-    setDraftStatusFilter(appliedStatusFilter);
-    setDraftSearchQuery(appliedSearchQuery);
-    setDraftFilters(appliedFilters);
-  };
-
-  const handleResetFilters = () => {
-    setDraftStatusFilter("all");
-    setDraftSearchQuery("");
-    setDraftFilters({
-      status: "all",
-      category: "",
-      dateRange: "",
+  const handleFilterChange = (filters) => {
+    console.log("Current filters:", {
+      status: filters.status, // Array of checked statuses
+      categories: filters.category, // Array of checked categories
+      search: filters.searchQuery, // Search term
+      radio: filters.radioFilter, // Radio selection
     });
   };
-
-  const handleFilterGroupChange = (id: string, value: string) => {
-    setDraftFilters((prev) => ({ ...prev, [id]: value }));
-  };
-
-  const selectedCount = [
-    appliedStatusFilter !== "all",
-    !!appliedSearchQuery,
-    ...Object.values(appliedFilters).filter(
-      (val) => val !== "" && val !== "all"
-    ),
-  ].filter(Boolean).length;
-
-  const filterOptions = [
-    {
-      id: "status",
-      label: "Status",
-      options: [
-        { value: "all", label: "All Statuses" },
-        { value: "active", label: "Active" },
-        { value: "inactive", label: "Inactive" },
-      ],
-    },
-    {
-      id: "category",
-      label: "Category",
-      options: [
-        { value: "all", label: "All Categories" },
-        { value: "tech", label: "Technology" },
-        { value: "design", label: "Design" },
-      ],
-    },
-  ];
 
   return (
     <div className=" flex flex-col gap-5">
@@ -167,52 +100,46 @@ const Dashboard = () => {
       </div>
 
       {/* FILTERS BUTTON  */}
-      <div className="">
-        <FilterButton
-          selectedCount={selectedCount}
-          popoverClassName="w-80"
-          isActive={hasActiveFilters}
-          onApply={handleApplyFilters}
-          onCancel={handleCancelFilters}
-          onReset={handleResetFilters}
-        >
-          <div className="space-y-4">
-            <Input
-              placeholder="Search users..."
-              value={draftSearchQuery}
-              onChange={(e) => setDraftSearchQuery(e.target.value)}
-            />
+      <div className=""></div>
 
-            <RadioGroup
-              value={draftStatusFilter}
-              onValueChange={setDraftStatusFilter}
-              className="space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="all" id="status-all" />
-                <Label htmlFor="status-all">All Users</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="active" id="status-active" />
-                <Label htmlFor="status-active">Active Only</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="inactive" id="status-inactive" />
-                <Label htmlFor="status-inactive">Inactive Only</Label>
-              </div>
-            </RadioGroup>
-
-            <FilterGroup
-              filters={filterOptions}
-              selectedValues={draftFilters}
-              onFilterChange={handleFilterGroupChange}
-              align="start"
-            />
-          </div>
-        </FilterButton>
+      {/* CHECKBOX COMPONENT  */}
+      <div className=" flex gap-5 items-center">
+        <ComCheckbox
+          id="terms"
+          label="Accept terms and conditions"
+          checked={isChecked}
+          onChange={(checked) => setIsChecked(checked)}
+          // disabled
+        />
       </div>
 
-      {/* FILTER GROUP  */}
+      {/* FILTER BUTTON WITH STATE  */}
+      <div className=" w-[20%]">
+        <FilterButtonWithState onFilterChange={handleFilterChange} />
+      </div>
+
+      {/* DATE PICKER  */}
+      <div className=" w-[20%]">
+        <DatePicker
+          className=" w-[140px]"
+          value={new Date()}
+          onChange={() => {
+            console.log("changed");
+          }}
+          placeholder="Select date"
+        />
+      </div>
+
+      {/* PROFILE CARD  */}
+      <ProfileCard
+        name="Laura Prichet"
+        status="Active"
+        stock={854}
+        sells="+4.5k"
+        phone="050 414 8778"
+        email="lindablair@mail.com"
+        address="1833 Bel Meadow Drive, Fontana, California 92335, USA"
+      />
     </div>
   );
 };

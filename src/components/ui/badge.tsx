@@ -12,7 +12,7 @@ const badgeVariants = cva(
         default:
           "border-transparent bg-gray-50 text-black-500 [a&]:hover:bg-gray-50/90",
         primary:
-          "border-transparent bg-primary-50 text-primary-500 [a&]:hover:bg-primary-50/90",
+          "border-transparent bg-primary-50 text-primary-700 [a&]:hover:bg-primary-50/90",
         secondary:
           "border-transparent bg-yellow-50 text-yellow-500 [a&]:hover:bg-yellow-50/90",
         success:

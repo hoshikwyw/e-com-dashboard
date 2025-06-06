@@ -29,7 +29,9 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
       <div className="flex items-center justify-center gap-2">
         <span className="text-xl font-bold tracking-tight text-primary flex items-center gap-2">
           <img src="/logo.png" alt="logo" className="" />
-          <h1 className=" text-primary-foreground">Strike Market</h1>
+          <h1 className=" text-primary-foreground md:block sm:hidden">
+            Strike Market
+          </h1>
         </span>
         <Button
           variant="ghost"

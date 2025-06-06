@@ -3,8 +3,6 @@ import ComGrid from "@/components/common/ComGrid";
 import { Button } from "@/components/ui/button";
 import ActionButtonsRenderer from "@/components/common/ActionButtonsRenderer";
 import SelectStatusRenderer from "@/components/common/SelectStatusRenderer";
-import { Badge } from "lucide-react";
-import { Input } from "@/components/common/Input";
 import { SearchInput } from "@/components/common/SearchInput";
 // import CustomHeader from "@/components/common/CustomHeader";
 // import type { Action } from "@/components/common/ComGrid";
@@ -21,6 +19,26 @@ const userData = [
   { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
   { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
   { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
+  { id: 3, name: "Charlie Brown", email: "charlie@example.com" },
 ];
 
 const Customers: React.FC = () => {
@@ -28,17 +46,17 @@ const Customers: React.FC = () => {
     Record<string, unknown>[]
   >([]);
 
-  const statusOptions = [
-    { value: "pending", label: "Pending", color: "#fef08a" }, // yellow
-    { value: "approved", label: "Approved", color: "#86efac" }, // green
-    { value: "rejected", label: "Rejected", color: "#fca5a5" }, // red
-    { value: "in_progress", label: "In Progress", color: "#93c5fd" }, // blue
-  ];
+  // const statusOptions = [
+  //   { value: "pending", label: "Pending", color: "#fef08a" }, // yellow
+  //   { value: "approved", label: "Approved", color: "#86efac" }, // green
+  //   { value: "rejected", label: "Rejected", color: "#fca5a5" }, // red
+  //   { value: "in_progress", label: "In Progress", color: "#93c5fd" }, // blue
+  // ];
 
-  const handleStatusChange = (selectedValue) => {
-    console.log("Selected status:", selectedValue);
-    // You can perform additional actions here
-  };
+  // const handleStatusChange = (selectedValue) => {
+  //   console.log("Selected status:", selectedValue);
+  //   // You can perform additional actions here
+  // };
 
   const userColumns = [
     {
@@ -48,12 +66,15 @@ const Customers: React.FC = () => {
       floatingFilter: false,
       resizable: false,
       sortable: false,
-      width: 20,
-      cellStyle: { textAlign: "left", paddingRight: "0px" },
+      width: 30,
+      cellStyle: { textAlign: "center", paddingRight: "0px" },
+      // headerClass:
+      //   "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-10",
     },
     {
       headerName: "ID",
       field: "id",
+      minWidth: 100,
       flex: 1,
       unSortIcon: true,
       cellStyle: { textAlign: "left", paddingLeft: "5px" },
@@ -65,6 +86,7 @@ const Customers: React.FC = () => {
       headerName: "Name",
       field: "name",
       flex: 1,
+      minWidth: 200,
       unSortIcon: true,
       headerClass:
         "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-0",
@@ -72,6 +94,7 @@ const Customers: React.FC = () => {
     {
       headerName: "Email",
       field: "email",
+      minWidth: 200,
       unSortIcon: true,
       headerClass:
         "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-0",
@@ -80,7 +103,7 @@ const Customers: React.FC = () => {
     {
       headerName: "Status",
       field: "status", // Make sure this matches a field in your data
-      width: 200,
+      minWidth: 200,
       cellRenderer: SelectStatusRenderer,
       flex: 1,
       editable: true, // Add this to make the cell editable
@@ -98,7 +121,7 @@ const Customers: React.FC = () => {
       cellRenderer: ActionButtonsRenderer,
       headerClass:
         "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-0",
-      width: 160,
+      minWidth: 160,
       cellStyle: { textAlign: "center" },
     },
   ];
@@ -128,7 +151,7 @@ const Customers: React.FC = () => {
         pageSize={10}
         metaData={{
           total: userData.length,
-          pageSize: 20,
+          pageSize: 10,
           current: 1,
         }}
         // bulkActionButtons={

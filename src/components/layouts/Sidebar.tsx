@@ -93,7 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           );
         })}
       </nav>
-      <div className="border-t pt-4 flex items-center gap-3">
+      <div className=" border-t pt-4 flex items-center gap-3">
         <UserCircle className="w-8 h-8 text-zinc-400" />
         <div>
           <div className="font-semibold text-zinc-800 dark:text-zinc-100">
