@@ -59,7 +59,7 @@ const Dashboard = () => {
       {/* BREAD CRUMB  */}
       <BreadCrumb
         items={[
-          { label: "Home", path: "/" },
+          { label: "Home", path: "/dashboard" },
           { label: "Products", path: "/products" },
           { label: "Current Product" },
         ]}
