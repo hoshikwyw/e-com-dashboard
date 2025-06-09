@@ -98,32 +98,25 @@ const ComGrid = forwardRef(
     const [selectedRow, setSelectedRow] = useState<T | null>(null);
     const [gridApi, setGridApi] = useState<GridApi | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const pageSize = 10; // Fixed page size for client-side pagination
 
     // Calculate pagination values based on metaData or defaults
-    useEffect(() => {
-      if (metaData) {
-        setCurrentPage(metaData.current || 1);
-        setPageSize(metaData.pageSize || 10);
-      }
-    }, [metaData]);
+    // useEffect(() => {
+    //   if (metaData) {
+    //     setCurrentPage(metaData.current || 1);
+    //     setPageSize(metaData.pageSize || 10);
+    //   }
+    // }, [metaData]);
 
-    const totalItems = metaData?.total || rowData.length;
+    // Calculate pagination values
+    const totalItems = rowData.length;
     const totalPages = Math.ceil(totalItems / pageSize);
-    const showPagination = !!metaData || rowData.length > pageSize;
+    const showPagination = rowData.length > pageSize;
 
     // Handle page changes
     const handlePageChange = (newPage: number) => {
       const validatedPage = Math.max(1, Math.min(newPage, totalPages));
       setCurrentPage(validatedPage);
-
-      if (onPageChanged) {
-        onPageChanged({
-          current: validatedPage,
-          pageSize,
-          total: totalItems,
-        });
-      }
     };
 
     // Handle grid ready
@@ -161,13 +154,8 @@ const ComGrid = forwardRef(
       getGridApi: () => gridApi,
     }));
 
-    // Calculate paginated data if not using server-side pagination
+    // Get data for current page
     const getPaginatedData = () => {
-      if (metaData) {
-        // Server-side pagination - use all rowData
-        return rowData;
-      }
-      // Client-side pagination
       const startIndex = (currentPage - 1) * pageSize;
       const endIndex = startIndex + pageSize;
       return rowData.slice(startIndex, endIndex);
@@ -259,14 +247,9 @@ const ComGrid = forwardRef(
 
     // Calculate showing range
     const getShowingRange = () => {
-      if (metaData) {
-        const start = (currentPage - 1) * pageSize + 1;
-        const end = Math.min(currentPage * pageSize, totalItems);
-        return `Showing ${start} - ${end} of ${totalItems}`;
-      }
       const start = (currentPage - 1) * pageSize + 1;
-      const end = Math.min(currentPage * pageSize, rowData.length);
-      return `Showing ${start} - ${end} of ${rowData.length}`;
+      const end = Math.min(currentPage * pageSize, totalItems);
+      return `Showing ${start} - ${end} of ${totalItems}`;
     };
 
     return (
