@@ -13,6 +13,7 @@ import TimeFilterTab, {
   type TimeFilterOption,
 } from "@/components/common/TimeFilterTab";
 import DeleteConfirmationModal from "@/components/common/DeleteConfirmationModal";
+import BreadCrumb from "@/components/common/BreadCrumb";
 
 const Dashboard = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -54,7 +55,15 @@ const Dashboard = () => {
   };
 
   return (
-    <div className=" flex flex-col gap-5 px-4 w-full h-full">
+    <div className=" flex flex-col gap-5 px-4 w-full h-full py-5">
+      {/* BREAD CRUMB  */}
+      <BreadCrumb
+        items={[
+          { label: "Home", path: "/" },
+          { label: "Products", path: "/products" },
+          { label: "Current Product" },
+        ]}
+      />
       {/* BADGES  */}
       <div className="flex gap-2 flex-wrap">
         {/* orange  */}
@@ -177,33 +186,13 @@ const Dashboard = () => {
       <PhotoUpload
         title="Media"
         maxSize={2}
+        buttonText="Add image"
         onUpload={handleUpload}
         className="my-uploader"
+        preview
+        multiple
+        accept="image/*"
       />
-
-      {/* TABS  */}
-      <div className=" w-[35%]">
-        <TimeFilterTab
-          defaultValue="all"
-          onTabChange={handleTimeFilterChange}
-        />
-      </div>
-
-      {/* TABS  */}
-      <div className=" w-[35%]">
-        <TimeFilterTab
-          defaultValue="all"
-          onTabChange={handleTimeFilterChange}
-        />
-      </div>
-
-      {/* TABS  */}
-      <div className=" w-[35%]">
-        <TimeFilterTab
-          defaultValue="all"
-          onTabChange={handleTimeFilterChange}
-        />
-      </div>
 
       {/* TABS  */}
       <div className=" w-[35%]">

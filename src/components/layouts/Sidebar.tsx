@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { NavLink } from "react-router-dom";
 import {
   User,
   ShoppingCart,
@@ -50,17 +51,9 @@ const navItems = [
 
 interface SidebarProps {
   open?: boolean;
-  onNavClick?: (nav: string) => void;
-  activeNav?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({
-  open = true,
-  onNavClick,
-  activeNav,
-}) => {
-  //   const pathname =
-  //     typeof window !== "undefined" ? window.location.pathname : "";
+const Sidebar: React.FC<SidebarProps> = ({ open = true }) => {
   return (
     <aside
       className={`
@@ -72,28 +65,25 @@ const Sidebar: React.FC<SidebarProps> = ({
       `}
     >
       <nav className="flex flex-col gap-2">
-        {navItems.map((item) => {
-          const navKey = item.label.toLowerCase(); // e.g., "customers"
-          const isActive = activeNav === navKey;
-          return (
-            <button
-              key={item.label}
-              type="button"
-              onClick={() => onNavClick && onNavClick(navKey)}
-              className={
-                `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition-colors w-full text-left ` +
-                (isActive
+        {navItems.map((item) => (
+          <NavLink
+            key={item.label}
+            to={item.href}
+            end
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition-colors w-full text-left ${
+                isActive
                   ? "bg-primary-foreground text-background hover:bg-primary-foreground/90"
-                  : " text-black-normal-text dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900")
-              }
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
+                  : "text-black-normal-text dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+              }`
+            }
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </NavLink>
+        ))}
       </nav>
-      <div className=" border-t pt-4 flex items-center gap-3">
+      <div className="border-t pt-4 flex items-center gap-3">
         <UserCircle className="w-8 h-8 text-zinc-400" />
         <div>
           <div className="font-semibold text-zinc-800 dark:text-zinc-100">

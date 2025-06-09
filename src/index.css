@@ -64,6 +64,7 @@
   --color-yellow-500: var(--yellow-500);
 
   --color-green-50: var(--green-50);
+  --color-green-100: var(--green-100);
   --color-green-500: var(--green-500);
 
   --color-blue-50: var(--blue-50);
@@ -185,6 +186,7 @@
   --yellow-500: #E46A11;
 
   --green-50: #E7F4EE;
+  --green-100: #CFE7DC;
   --green-500: #0D894F;
 
   --blue-50: #E8F8FD;

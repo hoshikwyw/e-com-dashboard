@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { z } from "zod";
 import IconButton from "./IconButton";
-import { Image, PlusIcon } from "lucide-react";
+import { Check, Image, X } from "lucide-react";
 import { Button } from "../ui/button";
 
 // Define the schema for component props
@@ -26,7 +26,6 @@ const PhotoUpload: React.FC<PhotoUploadProps> = (props) => {
   // Validate props against schema
   const {
     title,
-    label,
     accept,
     multiple,
     maxSize,
@@ -38,6 +37,11 @@ const PhotoUpload: React.FC<PhotoUploadProps> = (props) => {
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [error, setError] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,56 +88,62 @@ const PhotoUpload: React.FC<PhotoUploadProps> = (props) => {
   };
 
   return (
-    <div className=" bg-white w-full p-6 rounded-[8px] border border-gray-100 upload-shadow">
-      <span className=" text-lg text-black-800 pb-3">{title}</span>
+    <div className="bg-white w-full p-6 rounded-[8px] border border-gray-100 upload-shadow">
+      <span className="text-lg text-black-800 pb-3">{title}</span>
       <div className="">
-        <span className=" text-sm text-black-600">Photo</span>
+        <span className="text-sm text-black-600">Photo</span>
         <div
-          className={` w-full bg-gray-25 border border-dashed border-gray-100 rounded-[8px] px-3 py-6 flex flex-col justify-center items-center ${className}`}
+          className={`w-full bg-gray-25 border border-dashed border-gray-100 rounded-[8px] px-3 py-6 flex flex-col justify-center items-center ${className}`}
         >
-          <IconButton icon={Image} iconColor="#B71818" iconSize={24} />
-          <span className=" text-gray-400 my-4">
-            Drag and drop image here, or click add image
-          </span>
-          <div className="photo-upload-controls">
-            <label className="photo-upload-button">
-              <Button variant={"secondary"}>Add Image</Button>
-              {/* {buttonText} */}
-              <input
-                type="file"
-                accept={accept}
-                multiple={multiple}
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-              />
-            </label>
-            {error && <div className="photo-upload-error">{error}</div>}
-          </div>
-
-          {preview && selectedFiles.length > 0 && (
-            <div className="photo-preview-container">
+          {preview && selectedFiles.length > 0 ? (
+            <div className=" w-full h-full flex gap-5 justify-center items-center">
               {selectedFiles.map((file, index) => (
-                <div key={index} className="photo-preview-item">
+                <div
+                  key={index}
+                  className="w-[100px] h-[100px] rounded-[8px] relative group"
+                >
                   <img
                     src={URL.createObjectURL(file)}
                     alt={`Preview ${index + 1}`}
-                    className="photo-preview-image"
+                    className=" w-full h-full rounded-[8px]"
                   />
                   <button
                     type="button"
-                    className="photo-preview-remove"
+                    className="absolute top-1 right-1 hover:text-primary-700 bg-green-100 w-6 h-6 items-center justify-center rounded-full flex group-hover:hidden"
                     onClick={() => removeFile(index)}
                   >
-                    ×
+                    <Check size={16} color="#0D894F" />
                   </button>
-                  <div className="photo-preview-name">{file.name}</div>
-                  <div className="photo-preview-size">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                  </div>
+                  <button
+                    type="button"
+                    className="absolute top-1 right-1 hover:text-primary-700 bg-primary-50 w-6 h-6 items-center justify-center rounded-full hidden group-hover:flex"
+                    onClick={() => removeFile(index)}
+                  >
+                    <X size={16} color="#B71818" />
+                  </button>
                 </div>
               ))}
             </div>
+          ) : (
+            <IconButton icon={Image} iconColor="#B71818" iconSize={24} />
           )}
+          <span className="text-gray-400 my-4">
+            Drag and drop image here, or click add image
+          </span>
+          <div className="photo-upload-controls">
+            <Button variant={"secondary"} onClick={handleButtonClick}>
+              {buttonText}
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={accept}
+              multiple={multiple}
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+            {error && <div className="photo-upload-error">{error}</div>}
+          </div>
         </div>
       </div>
     </div>
