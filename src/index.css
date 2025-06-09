@@ -55,6 +55,7 @@
   --color-black-800: var(--black-800);
   --color-black-700: var(--black-700);
 
+  --color-gray-25: var(--gray-25);
   --color-gray-50: var(--gray-50);
   --color-gray-100: var(--gray-100);
   --color-gray-400: var(--gray-400);
@@ -175,6 +176,7 @@
   --black-700: #333843;
   --black-500: #667085;
 
+  --gray-25: #F9F9FC;
   --gray-50: #F0F1F3;
   --gray-100: #E0E2E7;
   --gray-400: #858D9D;
@@ -261,6 +263,10 @@
 .ag-cell-focus {
   border: none;
   outline: none;
+}
+
+.upload-shadow {
+  box-shadow: 0px 1.5px 2px 0px rgba(16, 24, 40, 0.1);
 }
 
 @layer base {

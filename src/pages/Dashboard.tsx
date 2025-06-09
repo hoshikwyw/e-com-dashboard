@@ -1,16 +1,22 @@
 import { Input } from "@/components/common/Input";
 import { SearchInput } from "@/components/common/SearchInput";
 import { Badge } from "@/components/ui/badge";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ComCheckbox } from "@/components/common/ComCheckbox";
 import { FilterButtonWithState } from "@/components/common/FilterButtonWithState";
 import { DatePicker } from "@/components/common/DatePicker";
 import ProfileCard from "@/components/common/ProfileCard";
+import PhotoUpload from "@/components/common/PhotoUpload";
+import TimeFilterTab, {
+  type TimeFilterOption,
+} from "@/components/common/TimeFilterTab";
+import DeleteConfirmationModal from "@/components/common/DeleteConfirmationModal";
 
 const Dashboard = () => {
-  const [isChecked, setIsChecked] = React.useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleFilterChange = (filters) => {
     console.log("Current filters:", {
@@ -21,10 +27,36 @@ const Dashboard = () => {
     });
   };
 
+  const handleUpload = (files: File | File[]) => {
+    console.log("Uploaded files:", files);
+    // Your upload logic here
+  };
+
+  const handleTimeFilterChange = (filter: TimeFilterOption) => {
+    console.log("Active tab:", filter);
+    // You can use this to filter your data based on the selected time period
+  };
+
+  const handleDelete = async () => {
+    console.log("Delete button clicked");
+  };
+
+  const handleEditSeller = (sellerId: string) => {
+    // Your edit logic here
+    console.log("Editing seller:", sellerId);
+  };
+
+  const handleDeleteSeller = async (sellerId: string) => {
+    // Your delete API call here
+    console.log("Deleting seller:", sellerId);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  };
+
   return (
-    <div className=" flex flex-col gap-5">
+    <div className=" flex flex-col gap-5 px-4 w-full h-full">
       {/* BADGES  */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {/* orange  */}
         <Badge variant="secondary">Low Stock</Badge>
         <Badge variant="secondary">Processing</Badge>
@@ -99,9 +131,6 @@ const Dashboard = () => {
         <SearchInput />
       </div>
 
-      {/* FILTERS BUTTON  */}
-      <div className=""></div>
-
       {/* CHECKBOX COMPONENT  */}
       <div className=" flex gap-5 items-center">
         <ComCheckbox
@@ -139,6 +168,57 @@ const Dashboard = () => {
         phone="050 414 8778"
         email="lindablair@mail.com"
         address="1833 Bel Meadow Drive, Fontana, California 92335, USA"
+        onEdit={() => handleEditSeller("123")}
+        onDelete={() => handleDeleteSeller("123")}
+        itemType="seller"
+      />
+
+      {/* IMAGE UPLOAD  */}
+      <PhotoUpload
+        title="Media"
+        maxSize={2}
+        onUpload={handleUpload}
+        className="my-uploader"
+      />
+
+      {/* TABS  */}
+      <div className=" w-[35%]">
+        <TimeFilterTab
+          defaultValue="all"
+          onTabChange={handleTimeFilterChange}
+        />
+      </div>
+
+      {/* TABS  */}
+      <div className=" w-[35%]">
+        <TimeFilterTab
+          defaultValue="all"
+          onTabChange={handleTimeFilterChange}
+        />
+      </div>
+
+      {/* TABS  */}
+      <div className=" w-[35%]">
+        <TimeFilterTab
+          defaultValue="all"
+          onTabChange={handleTimeFilterChange}
+        />
+      </div>
+
+      {/* TABS  */}
+      <div className=" w-[35%]">
+        <TimeFilterTab
+          defaultValue="all"
+          onTabChange={handleTimeFilterChange}
+        />
+      </div>
+
+      {/* DELETE CONFIRM MODAL  */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        itemType="Product"
       />
     </div>
   );

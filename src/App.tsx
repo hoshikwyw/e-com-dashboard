@@ -38,8 +38,10 @@ function App() {
             activeNav={activeNav}
           />
         </div>
-        <main className="flex-1 bg-muted p-6 overflow-y-auto">
-          {navComponents[activeNav]}
+        <main className="flex-1 h-full overflow-y-scroll p-6 bg-muted [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+          <div className="max-w-full h-full overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] overflow-x-hidden">
+            {navComponents[activeNav]}
+          </div>
         </main>
       </div>
     </div>

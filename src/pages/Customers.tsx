@@ -139,7 +139,7 @@ const Customers: React.FC = () => {
   );
 
   return (
-    <div className="">
+    <div className=" flex w-full min-h-full">
       {/* <h1 className="text-2xl font-bold mb-4">Customers</h1> */}
       <ComGrid
         columnDefs={userColumns}
