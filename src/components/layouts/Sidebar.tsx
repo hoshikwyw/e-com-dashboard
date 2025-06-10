@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   User,
   ShoppingCart,
@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   Package2,
   CreditCard,
+  Menu,
 } from "lucide-react";
 
 const navItems = [
@@ -51,29 +52,56 @@ const navItems = [
 
 interface SidebarProps {
   open?: boolean;
+  onToggleSidebar?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ open = true }) => {
+const Sidebar: React.FC<SidebarProps> = ({ open, onToggleSidebar }) => {
+  const location = useLocation();
+
+  // Log the current path for debugging
+  React.useEffect(() => {
+    console.log("Current path:", location.pathname);
+  }, [location.pathname]);
+  // h-[calc(100vh-4rem)]
+
   return (
     <aside
       className={`
-        fixed md:static left-0 top-16 z-30
-        w-64 h-[calc(100vh-4rem)] bg-white border-r flex flex-col justify-between py-6 px-4 dark:bg-zinc-950 dark:border-zinc-800
+        fixed left-0 top-0 z-50
+        w-64 h-screen bg-white border-r flex flex-col justify-between p-4 dark:bg-zinc-950 dark:border-zinc-800
         transition-transform duration-200
         overflow-y-auto
-        ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
+        ${open ? "translate-x-0" : "-translate-x-full"}
       `}
     >
-      <nav className="flex flex-col gap-2">
+      <nav className="flex flex-col gap-2 ">
+      {/* Sidebar Toggle */}
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-xl font-bold tracking-tight text-primary flex items-center gap-2">
+          <img src="/logo.png" alt="logo" className="" />
+          {/* <h1 className=" text-primary-700 md:block sm:hidden">
+            Strike Market
+          </h1> */}
+        </span>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={onToggleSidebar}
+          aria-label="Toggle sidebar"
+        >
+          <Menu className="w-6 h-6" />
+        </Button>
+      </div>
         {navItems.map((item) => (
           <NavLink
             key={item.label}
             to={item.href}
-            end
+            end={item.href === "/dashboard"} // Only use 'end' for Dashboard to match exactly
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition-colors w-full text-left ${
                 isActive
-                  ? "bg-primary-foreground text-background hover:bg-primary-foreground/90"
+                  ? "bg-primary-700 text-background hover:bg-primary-foreground/90"
                   : "text-black-normal-text dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900"
               }`
             }

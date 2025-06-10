@@ -9,42 +9,38 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
-  Menu,
   Search,
   Bell,
   MessageCircle,
   UserCircle,
   LogOut,
   User,
+  Menu,
 } from "lucide-react";
 
 interface HeaderProps {
-  onToggleSidebar?: () => void;
+  sidebarOpen: boolean;
+  onToggleSidebar: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
+const Header: React.FC<HeaderProps> = ({ sidebarOpen, onToggleSidebar }) => {
   return (
-    <header className="sticky top-0 z-40 w-full h-16 flex items-center justify-between px-4 border-b bg-white dark:bg-zinc-950 dark:border-zinc-800">
-      {/* Sidebar Toggle */}
-      <div className="flex items-center justify-center gap-2">
-        <span className="text-xl font-bold tracking-tight text-primary flex items-center gap-2">
-          <img src="/logo.png" alt="logo" className="" />
-          <h1 className=" text-primary-foreground md:block sm:hidden">
-            Strike Market
-          </h1>
-        </span>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          onClick={onToggleSidebar}
-          aria-label="Toggle sidebar"
-        >
-          <Menu className="w-6 h-6" />
-        </Button>
-      </div>
+    <header
+      className={`fixed top-0 z-40 w-full h-16 flex items-center justify-between border-b bg-white dark:bg-zinc-950 dark:border-zinc-800 ${
+        sidebarOpen ? "md:pl-64" : "md:pl-4"
+      } transition-all duration-200 relative`}
+    >
+      <Button
+        variant="ghost"
+        className={` block`}
+        onClick={onToggleSidebar}
+        aria-label="Toggle sidebar"
+      >
+        <Menu className="" color="#667085" />
+      </Button>
+
       {/* Actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 px-4">
         {/* Search */}
         <Button variant="ghost" size="icon" aria-label="Search">
           <Search className="w-5 h-5" />

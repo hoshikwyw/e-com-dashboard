@@ -58,11 +58,10 @@ const Dashboard = () => {
     <div className=" flex flex-col gap-5 px-4 w-full h-full py-5">
       {/* BREAD CRUMB  */}
       <BreadCrumb
-        items={[
-          { label: "Home", path: "/dashboard" },
-          { label: "Products", path: "/products" },
-          { label: "Current Product" },
-        ]}
+        pathMap={{
+          "/products": "Products",
+          "/products/electronics": "Electronics",
+        }}
       />
       {/* BADGES  */}
       <div className="flex gap-2 flex-wrap">
@@ -97,8 +96,8 @@ const Dashboard = () => {
       </div>
 
       {/* BUTTONS  */}
-      <div className=" flex flex-col gap-5">
-        <div className=" flex gap-5">
+      <div className=" flex flex-col gap-5 flex-wrap">
+        <div className=" flex gap-5 flex-wrap">
           <Button variant={"default"} disabled>
             Default disable
           </Button>
@@ -108,7 +107,7 @@ const Dashboard = () => {
             <Plus /> Default
           </Button>
         </div>
-        <div className=" flex gap-5">
+        <div className=" flex gap-5 flex-wrap">
           <Button variant={"outline"} disabled>
             Outline Disable
           </Button>
@@ -118,7 +117,7 @@ const Dashboard = () => {
             Outline
           </Button>
         </div>
-        <div className=" flex gap-5">
+        <div className=" flex gap-5 flex-wrap">
           <Button variant={"secondary"} disabled>
             secondary Disable
           </Button>
@@ -128,7 +127,7 @@ const Dashboard = () => {
             Secondary
           </Button>
         </div>
-        <div className=" flex gap-5">
+        <div className=" flex gap-5 flex-wrap">
           <Button variant={"ghost"}>Ghost</Button>
           <Button variant={"link"}>Link</Button>
         </div>
@@ -195,7 +194,7 @@ const Dashboard = () => {
       />
 
       {/* TABS  */}
-      <div className=" w-[35%]">
+      <div className=" w-full lg:w-[35%]">
         <TimeFilterTab
           defaultValue="all"
           onTabChange={handleTimeFilterChange}

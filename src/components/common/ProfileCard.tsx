@@ -13,8 +13,9 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface ProfileCardProps {
+  id: number;
   name: string;
-  status: "Active" | "Inactive";
+  status: string;
   stock: number;
   sells: string;
   phone: string;
@@ -27,6 +28,7 @@ interface ProfileCardProps {
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
+  id,
   name,
   status,
   stock,
@@ -82,7 +84,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           </Avatar>
 
           <div className="text-base font-semibold mt-4">{name}</div>
-          <Badge variant="success" className="bg-green-100 text-green-600">
+          <Badge
+            variant={status === "active" ? "success" : "primary"}
+            className=" capitalize"
+          >
             {status}
           </Badge>
 
@@ -122,7 +127,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               </div>
               <div className="flex flex-col gap-1 items-start justify-start">
                 <span className="text-sm text-black-600">Address</span>
-                <span className="text-sm text-black-800">{address}</span>
+                <span className="text-sm text-black-800 line-clamp-1">
+                  {address}
+                </span>
               </div>
             </div>
           </div>
