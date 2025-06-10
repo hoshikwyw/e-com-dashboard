@@ -3,7 +3,7 @@ import ProfileDetailCard from "@/components/common/ProfileDetailCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, DockIcon, Edit, Trash2, X } from "lucide-react";
+import { DockIcon, Trash2, X } from "lucide-react";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -57,17 +57,9 @@ const SellerDetailPage = () => {
       <div className="w-full flex items-end justify-between mb-6">
         <div>
           <div className="flex items-center gap-4">
-            {/* <button onClick={() => navigate(-1)}>
-              <ArrowLeft className="h-5 w-5" />
-            </button> */}
             <h1 className="pageTitle">Seller Details</h1>
           </div>
-          <BreadCrumb
-          // items={[
-          //   { label: "Sellers", href: "/sellers" },
-          //   { label: mockSeller.name, href: `/sellers/${sellerId}` },
-          // ]}
-          />
+          <BreadCrumb />
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleEditSeller}>
@@ -82,99 +74,21 @@ const SellerDetailPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        {/* Seller Info Card */}
-        {/* <Card className="md:col-span-1">
-          <CardHeader>
-            <CardTitle>Seller Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-xl font-semibold">
-                  {mockSeller.name.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">{mockSeller.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {mockSeller.email}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Status</span>
-                  <span
-                    className={`text-sm font-medium ${
-                      mockSeller.status === "Active"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {mockSeller.status}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Phone</span>
-                  <span className="text-sm font-medium">
-                    {mockSeller.phoneNo}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Address</span>
-                  <span className="text-sm font-medium">
-                    {mockSeller.address}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Join Date
-                  </span>
-                  <span className="text-sm font-medium">
-                    {mockSeller.joinDate}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Last Activity
-                  </span>
-                  <span className="text-sm font-medium">
-                    {mockSeller.lastActivity}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Rating</span>
-                  <span className="text-sm font-medium">
-                    {mockSeller.rating}/5
-                  </span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card> */}
-        <ProfileDetailCard
-        id=1
-          name="John Doe"
-          status="active"
-          phone="050 414 8778"
-          email="lindablair@mail.com"
-          address="1833 Bel Meadow Drive, Fontana, California 92335, USA"
-          verified
-        />
+      <div className="grid grid-cols-1 md:grid-cols-8 gap-6 mb-6">
+        <div className=" col-span-3">
+          <ProfileDetailCard
+            id={123}
+            name="John Doe"
+            status="active"
+            phone="050 414 8778"
+            email="lindablair@mail.com"
+            address="1833 Bel Meadow Drive, Fontana, California 92335, USA"
+            verified
+          />
+        </div>
 
         {/* Main Content Area */}
-        <div className="md:col-span-2 space-y-6">
-          {/* Bio Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>About</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">{mockSeller.bio}</p>
-            </CardContent>
-          </Card>
-
+        <div className="md:col-span-5 space-y-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
