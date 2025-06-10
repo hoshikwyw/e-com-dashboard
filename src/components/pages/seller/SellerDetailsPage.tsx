@@ -1,8 +1,9 @@
 import BreadCrumb from "@/components/common/BreadCrumb";
+import ProfileDetailCard from "@/components/common/ProfileDetailCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, DockIcon, Edit, Trash2, X } from "lucide-react";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -70,17 +71,20 @@ const SellerDetailPage = () => {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleEditSeller}>
-            <Edit className="mr-2 h-4 w-4" /> Edit
+            <X className="mr-2 h-4 w-4" /> Cancel
+          </Button>
+          <Button variant="secondary" onClick={handleEditSeller}>
+            <Trash2 className="mr-2 h-4 w-4" /> Delete
           </Button>
           <Button variant="default" onClick={handleDeleteSeller}>
-            <Trash2 className="mr-2 h-4 w-4" /> Delete
+            <DockIcon className="mr-2 h-4 w-4" /> Save
           </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {/* Seller Info Card */}
-        <Card className="md:col-span-1">
+        {/* <Card className="md:col-span-1">
           <CardHeader>
             <CardTitle>Seller Information</CardTitle>
           </CardHeader>
@@ -148,7 +152,16 @@ const SellerDetailPage = () => {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
+        <ProfileDetailCard
+        id=1
+          name="John Doe"
+          status="active"
+          phone="050 414 8778"
+          email="lindablair@mail.com"
+          address="1833 Bel Meadow Drive, Fontana, California 92335, USA"
+          verified
+        />
 
         {/* Main Content Area */}
         <div className="md:col-span-2 space-y-6">

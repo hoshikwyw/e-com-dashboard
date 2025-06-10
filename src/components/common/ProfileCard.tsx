@@ -13,7 +13,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface ProfileCardProps {
-  id: number;
+  id?: number;
   name: string;
   status: string;
   stock: number;
