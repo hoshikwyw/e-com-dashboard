@@ -111,7 +111,7 @@ const ComGrid = forwardRef(
     // Calculate pagination values
     const totalItems = rowData.length;
     const totalPages = Math.ceil(totalItems / pageSize);
-    const showPagination = rowData.length > pageSize;
+    const showPagination = rowData.length > 0;
 
     // Handle page changes
     const handlePageChange = (newPage: number) => {

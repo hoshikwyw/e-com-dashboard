@@ -12,6 +12,7 @@ import {
   Sellers,
 } from "./pages";
 import SellerDetailPage from "./components/pages/seller/SellerDetailsPage";
+import AddNewSellerPage from "./components/pages/seller/AddNewSellerPage";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -64,6 +65,7 @@ function App() {
               <Route path="/purchase" element={<Purchase />} />
               <Route path="/sellers" element={<Sellers />} />
               <Route path="/sellers/:id" element={<SellerDetailPage />} />
+              <Route path="/sellers/new" element={<AddNewSellerPage />} />
             </Routes>
           </div>
         </main>

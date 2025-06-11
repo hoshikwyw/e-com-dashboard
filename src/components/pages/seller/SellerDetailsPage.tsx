@@ -1,13 +1,27 @@
-import BreadCrumb from "@/components/common/BreadCrumb";
-import ProfileDetailCard from "@/components/common/ProfileDetailCard";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DockIcon, Trash2, X } from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
+import BreadCrumb from "@/components/common/BreadCrumb";
+import IconButton from "@/components/common/IconButton";
+import ProfileDetailCard from "@/components/common/ProfileDetailCard";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  DockIcon,
+  ShoppingCart,
+  Trash2,
+  UsersRound,
+  Wallet,
+  X,
+} from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { generateSellerTableData } from "@/entities/mockDatas";
+import ComGrid from "@/components/common/ComGrid";
+import type { ColDef } from "ag-grid-community";
+import { SearchInput } from "@/components/common/SearchInput";
+import { DatePicker } from "@/components/common/DatePicker";
+import { FilterButtonWithState } from "@/components/common/FilterButtonWithState";
 
-// Mock data - in a real app this would come from an API
 const mockSeller = {
   id: "123",
   name: "John Doe",
@@ -34,26 +48,136 @@ const mockSeller = {
 };
 
 const SellerDetailPage = () => {
-  //   const sellerId = params.id;
   const { id } = useParams();
   const navigate = useNavigate();
-  // In a real app, you would fetch the seller data here using the sellerId
-  // const { data: seller, isLoading, error } = useGetSellerQuery(sellerId);
+  const sellerProducts = generateSellerTableData(10);
 
   const handleEditSeller = () => {
     console.log("Editing seller:", id);
-    // Navigate to edit page or open modal
-    // navigate(`/sellers/${id}/edit`);
+  };
+
+  const handleFilterChange = (filters: any) => {
+    console.log("Current filters:", {
+      status: filters.status, // Array of checked statuses
+      categories: filters.category, // Array of checked categories
+      search: filters.searchQuery, // Search term
+      radio: filters.radioFilter, // Radio selection
+    });
   };
 
   const handleDeleteSeller = async () => {
     console.log("Deleting seller:", id);
-    // Call delete API and then redirect to sellers list
     // await deleteSeller(id);
     navigate("/sellers");
   };
+
+  const columnDef: ColDef[] = [
+    {
+      headerName: "ID",
+      field: "id",
+      minWidth: 60,
+      unSortIcon: true,
+      cellStyle: { textAlign: "left", paddingLeft: "5px", color: "#B71818" },
+      headerClass:
+        "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-0",
+    },
+    {
+      headerName: "Product",
+      field: "",
+      minWidth: 260,
+      unSortIcon: true,
+      cellStyle: { textAlign: "left", paddingLeft: "5px" },
+      headerClass:
+        "[&_.ag-header-cell-label]:justify-left flex justify-left ag-header-cell-text padding-left-0",
+      cellRenderer: (params: any) => (
+        <div className=" w-full flex items-center pl-3">
+          <img
+            className="w-11 h-11 rounded-[8px] mr-2"
+            src="https://i.pinimg.com/736x/e2/b1/ae/e2b1ae1478eaef3c5ea16078473c768d.jpg"
+            alt={params.data.productName}
+          />
+          <span className=" text-black-700">{params.data.productName}</span>
+        </div>
+      ),
+    },
+    {
+      headerName: "Category",
+      field: "productCategory",
+      minWidth: 100,
+      flex: 1,
+      unSortIcon: true,
+      cellStyle: { textAlign: "left", paddingLeft: "5px" },
+      headerClass:
+        "[&_.ag-header-cell-label]:justify-left flex justify-left ag-header-cell-text padding-left-0",
+      cellRenderer: (params: any) => (
+        <span className=" w-full pl-3">{params.data.productCategory}</span>
+      ),
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      minWidth: 100,
+      flex: 1,
+      unSortIcon: true,
+      cellStyle: { textAlign: "left", paddingLeft: "5px" },
+      cellRenderer: (params: any) => {
+        // Determine badge variant based on status value
+        const getBadgeVariant = (status: string) => {
+          switch (status.toLowerCase()) {
+            case "in stock":
+            case "active":
+              return "success";
+            case "low stock":
+            case "pending":
+              return "secondary";
+            case "out of stock":
+            case "inactive":
+              return "primary";
+            default:
+              return "default";
+          }
+        };
+
+        return (
+          <span className="w-full pl-3">
+            <Badge variant={getBadgeVariant(params.value)}>
+              {params.value}
+            </Badge>
+          </span>
+        );
+      },
+      headerClass:
+        "[&_.ag-header-cell-label]:justify-left flex justify-left ag-header-cell-text padding-left-0",
+    },
+    {
+      headerName: "Date",
+      field: "date",
+      minWidth: 100,
+      flex: 1,
+      unSortIcon: true,
+      cellStyle: { textAlign: "left", paddingLeft: "5px" },
+      headerClass:
+        "[&_.ag-header-cell-label]:justify-center flex justify-center ag-header-cell-text padding-left-0",
+    },
+  ];
+
+  const bulkActions = (
+    <>
+      <DatePicker
+        className=" w-[160px]"
+        value={new Date()}
+        onChange={() => {
+          console.log("changed");
+        }}
+        placeholder="Select date"
+      />
+      <FilterButtonWithState onFilterChange={handleFilterChange} />
+    </>
+  );
+
   return (
     <div className="w-full h-full">
+      {/* HEADER SECTION  */}
       <div className="w-full flex items-end justify-between mb-6">
         <div>
           <div className="flex items-center gap-4">
@@ -63,151 +187,119 @@ const SellerDetailPage = () => {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleEditSeller}>
-            <X className="mr-2 h-4 w-4" /> Cancel
+            <X className="h-4 w-4" />
+            <span className="hidden sm:inline ml-2">Cancel</span>
           </Button>
           <Button variant="secondary" onClick={handleEditSeller}>
-            <Trash2 className="mr-2 h-4 w-4" /> Delete
+            <Trash2 className="h-4 w-4" />
+            <span className="hidden sm:inline ml-2">Delete</span>
           </Button>
           <Button variant="default" onClick={handleDeleteSeller}>
-            <DockIcon className="mr-2 h-4 w-4" /> Save
+            <DockIcon className="h-4 w-4" />
+            <span className="hidden sm:inline ml-2">Save</span>
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-8 gap-6 mb-6">
-        <div className=" col-span-3">
-          <ProfileDetailCard
-            id={123}
-            name="John Doe"
-            status="active"
-            phone="050 414 8778"
-            email="lindablair@mail.com"
-            address="1833 Bel Meadow Drive, Fontana, California 92335, USA"
-            verified
-          />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        {/* PROFILE CARD SECTION  */}
+        <div className=" col-span-1 flex justify-center items-center">
+          <div className=" max-w-[360px]">
+            <ProfileDetailCard
+              id={123}
+              name="John Doe"
+              status="active"
+              phone="050 414 8778"
+              email="lindablair@mail.com"
+              address="1833 Bel Meadow Drive, Fontana, California 92335, USA"
+              verified
+            />
+          </div>
         </div>
 
         {/* Main Content Area */}
-        <div className="md:col-span-5 space-y-6">
+        <div className="md:col-span-2 space-y-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total Products
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {mockSeller.products.length}
+            <Card className=" !p-5 flex flex-col">
+              <CardContent className=" !p-0 flex flex-col gap-4">
+                <IconButton
+                  icon={Wallet}
+                  iconColor="#0D894F"
+                  iconSize={24}
+                  className=" !bg-green-100 !border-green-50"
+                />
+                <div className=" flex flex-col gap-2">
+                  <p className=" text-gray-500">Total Profits</p>
+                  <div className=" text-2xl text-black-700 flex gap-2 items-center">
+                    {mockSeller.itemStock}
+                    <Badge variant={"success"}>+20%</Badge>
+                  </div>
                 </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Items in Stock
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{mockSeller.itemStock}</div>
+            <Card className=" !p-5 flex flex-col">
+              <CardContent className=" !p-0 flex flex-col gap-4">
+                <IconButton
+                  icon={ShoppingCart}
+                  iconColor="#E46A11"
+                  iconSize={24}
+                  className=" !bg-yellow-100 !border-yellow-50"
+                />
+                <div className=" flex flex-col gap-2">
+                  <p className=" text-gray-500">Total Orders</p>
+                  <div className=" text-2xl text-black-700 flex gap-2 items-center">
+                    {mockSeller.itemStock}
+                    <Badge variant={"success"}>+10%</Badge>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total Sales
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{mockSeller.sellsNo}</div>
+            <Card className=" !p-5 flex flex-col">
+              <CardContent className=" !p-0 flex flex-col gap-4">
+                <IconButton
+                  icon={UsersRound}
+                  iconColor="#F34040"
+                  iconSize={24}
+                  className=" !bg-primary-100 !border-primary-50"
+                />
+                <div className=" flex flex-col gap-2">
+                  <p className=" text-gray-500">Total Users</p>
+                  <div className=" text-2xl text-black-700 flex gap-2 items-center">
+                    {mockSeller.itemStock}{" "}
+                    <Badge variant={"success"}>+10%</Badge>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Tabs */}
-          <Tabs defaultValue="products" className="w-full">
-            <TabsList>
-              <TabsTrigger value="products">Products</TabsTrigger>
-              <TabsTrigger value="orders">Recent Orders</TabsTrigger>
-              <TabsTrigger value="activity">Activity</TabsTrigger>
-            </TabsList>
-            <TabsContent value="products">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="space-y-4">
-                    {mockSeller.products.map((product) => (
-                      <div
-                        key={product.id}
-                        className="flex items-center justify-between p-4 border rounded-lg"
-                      >
-                        <div>
-                          <h4 className="font-medium">{product.name}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            ${product.price.toFixed(2)}
-                          </p>
-                        </div>
-                        <div className="flex gap-4">
-                          <span className="text-sm">
-                            Stock: {product.stock}
-                          </span>
-                          <span className="text-sm">
-                            Sales: {product.sales}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
+          {/* List Table */}
+          <div className=" w-full flex flex-col min-h-full">
+            <ComGrid
+              columnDefs={columnDef}
+              rowData={sellerProducts}
+              rowSelection="multiple"
+              metaData={{
+                total: sellerProducts.length,
+                pageSize: 10,
+                current: 1,
+              }}
+              headerContent={{
+                left: (
+                  <div>
+                    <SearchInput
+                      onSearch={(value) => {
+                        console.log(value);
+                      }}
+                      isLoading={false}
+                    />
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="orders">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="space-y-4">
-                    {mockSeller.orders.map((order) => (
-                      <div
-                        key={order.id}
-                        className="flex items-center justify-between p-4 border rounded-lg"
-                      >
-                        <div>
-                          <h4 className="font-medium">Order #{order.id}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {order.date}
-                          </p>
-                        </div>
-                        <div className="flex gap-4">
-                          <span className="font-medium">
-                            ${order.amount.toFixed(2)}
-                          </span>
-                          <span
-                            className={`text-sm ${
-                              order.status === "Completed"
-                                ? "text-green-600"
-                                : order.status === "Shipped"
-                                ? "text-blue-600"
-                                : "text-yellow-600"
-                            }`}
-                          >
-                            {order.status}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="activity">
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="text-muted-foreground">
-                    Activity log will appear here
-                  </p>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                ),
+                right: bulkActions,
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

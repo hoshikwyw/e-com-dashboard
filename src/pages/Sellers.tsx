@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import BreadCrumb from "@/components/common/BreadCrumb";
 import ComPagination from "@/components/common/ComPagination";
 import { FilterButtonWithState } from "@/components/common/FilterButtonWithState";
@@ -7,13 +8,13 @@ import { Button } from "@/components/ui/button";
 import { generateMockSellersData } from "@/entities/mockDatas";
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Sellers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 8; // Show 8 cards per page
   const naviagte = useNavigate();
-  const handleFilterChange = (filters) => {
+  const handleFilterChange = (filters: any) => {
     console.log("Current filters:", {
       status: filters.status, // Array of checked statuses
       categories: filters.category, // Array of checked categories
@@ -53,7 +54,7 @@ const Sellers = () => {
           <BreadCrumb />
         </div>
         <div className="">
-          <Button variant="default">
+          <Button variant="default" onClick={() => naviagte("/sellers/new")}>
             <Plus /> Add Seller
           </Button>
         </div>
@@ -80,24 +81,6 @@ const Sellers = () => {
             onEdit={() => handleEditSeller(item?.id)}
             onDelete={() => handleDeleteSeller(item?.id)}
           />
-          // <Link
-          //   to={`/sellers/${item.id}`}
-          //   // className="block p-4 border rounded-lg hover:shadow-md transition-shadow"
-          // >
-          //   <ProfileCard
-          //     id={item.id}
-          //     name={item.name}
-          //     email={item.email}
-          //     phone={item.phoneNo}
-          //     address={item.address}
-          //     status={item.status}
-          //     stock={item.itemStock}
-          //     sells={item.sellsNo}
-          //     itemType="seller"
-          //     onEdit={() => handleEditSeller("123")}
-          //     onDelete={() => handleDeleteSeller("123")}
-          //   />
-          // </Link>
         ))}
       </div>
       <div className="">

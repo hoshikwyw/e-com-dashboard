@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import ComGrid from "@/components/common/ComGrid";
 import { Button } from "@/components/ui/button";
-import ActionButtonsRenderer from "@/components/common/ActionButtonsRenderer";
-import SelectStatusRenderer from "@/components/common/SelectStatusRenderer";
+import ActionButtonsRenderer from "@/components/common/Renderer/ActionButtonsRenderer";
+import SelectStatusRenderer from "@/components/common/Renderer/SelectStatusRenderer";
 import { SearchInput } from "@/components/common/SearchInput";
 // import CustomHeader from "@/components/common/CustomHeader";
 // import type { Action } from "@/components/common/ComGrid";
@@ -154,38 +154,6 @@ const Customers: React.FC = () => {
           pageSize: 10,
           current: 1,
         }}
-        // bulkActionButtons={
-        //   <>
-        //     <Button
-        //       variant="outline"
-        //       size="sm"
-        //       // label="Copy"
-        //       // disabled={selectedRow.length !== 1 || currentEdit.isEditing}
-        //       // onClick={onCopy}
-        //     >
-        //       Copy
-        //     </Button>
-        //     <Button
-        //       variant="default"
-        //       size="sm"
-        //       // label="New"
-        //       // disabled={currentEdit.isEditing}
-        //       // onClick={onNew}
-        //     >
-        //       New
-        //     </Button>
-        //   </>
-        // }
-        // headerContent={{
-        //   left: (
-        //     <div className="flex items-center gap-2">
-        //       <h3>Users</h3>
-        //       <Badge />
-        //     </div>
-        //   ),
-        //   right: bulkActions,
-        // }}
-        // bulkActions={bulkActions}
         headerContent={{
           left: (
             <div>

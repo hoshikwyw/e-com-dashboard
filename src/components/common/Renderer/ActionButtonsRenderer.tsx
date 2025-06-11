@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
 const ActionButtonsRenderer = () => {

@@ -45,6 +45,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
       <div className="relative w-full max-w-md">
         <Input
           type="search"
+          variant="search"
           placeholder="Search..."
           leftIcon={<Search className="h-4 w-4" />}
           value={searchValue}
