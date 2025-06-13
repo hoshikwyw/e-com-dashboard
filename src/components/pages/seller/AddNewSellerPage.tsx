@@ -1,5 +1,5 @@
 import BreadCrumb from "@/components/common/BreadCrumb";
-import CustomSelect from "@/components/common/CustomSelect";
+import { CustomSelect } from "@/components/common/CustomSelect";
 import { Input } from "@/components/common/Input";
 import PhotoUpload from "@/components/common/PhotoUpload";
 import { Button } from "@/components/ui/button";
@@ -12,12 +12,18 @@ const AddNewSellerPage = () => {
     // Your upload logic here
   };
 
-  const [selectedValue, setSelectedValue] = useState<string>();
+  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([
+    "react",
+    "angular",
+  ]);
 
   const options = [
     { value: "option1", label: "Option 1" },
     { value: "option2", label: "Option 2" },
     { value: "option3", label: "Option 3" },
+    { value: "option4", label: "Option 4" },
+    { value: "option5", label: "Option 5" },
+    { value: "option6", label: "Option 6" },
   ];
 
   return (
@@ -62,18 +68,16 @@ const AddNewSellerPage = () => {
           <div className=" col-span-1">
             <Input label="Name" placeholder="Enter name" />
           </div>
-          <div className=" col-span-1">
+          <div className=" col-span-1 ">
             <CustomSelect
-              label="Categories"
-              options={[
-                { value: "1", label: "Electronics" },
-                { value: "2", label: "Clothing" },
-              ]}
-              value={selectedValue}
-              onValueChange={setSelectedValue}
-              placeholder="Select categories"
-              clearable
-              multiple
+              label="Select frameworks"
+              options={options}
+              onValueChange={setSelectedFrameworks}
+              defaultValue={selectedFrameworks}
+              placeholder="Select frameworks"
+              variant="inverted"
+              // animation={2}
+              maxCount={1}
             />
           </div>
         </div>
