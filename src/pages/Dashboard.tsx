@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const handleFilterChange = (filters) => {
+  const handleFilterChange = (filters: any) => {
     console.log("Current filters:", {
       status: filters.status, // Array of checked statuses
       categories: filters.category, // Array of checked categories

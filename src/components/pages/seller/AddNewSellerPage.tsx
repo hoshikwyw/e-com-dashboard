@@ -3,7 +3,7 @@ import { CustomSelect } from "@/components/common/CustomSelect";
 import { Input } from "@/components/common/Input";
 import PhotoUpload from "@/components/common/PhotoUpload";
 import { Button } from "@/components/ui/button";
-import { DockIcon, X } from "lucide-react";
+import { DockIcon, DollarSign, Map, X } from "lucide-react";
 import React, { useState } from "react";
 
 const AddNewSellerPage = () => {
@@ -12,10 +12,7 @@ const AddNewSellerPage = () => {
     // Your upload logic here
   };
 
-  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([
-    "react",
-    "angular",
-  ]);
+  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
 
   const options = [
     { value: "option1", label: "Option 1" },
@@ -27,9 +24,9 @@ const AddNewSellerPage = () => {
   ];
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full flex flex-col gap-6">
       {/* HEADER SECTION  */}
-      <div className="w-full flex items-end justify-between mb-6">
+      <div className="w-full flex items-end justify-between">
         <div>
           <div className="flex items-center gap-4">
             <h1 className="pageTitle">Seller Details</h1>
@@ -62,23 +59,65 @@ const AddNewSellerPage = () => {
       />
 
       {/* SELLER INFORMATION  */}
-      <div className=" w-full bg-background p-6 border border-gray-100 rounded-[8px] upload-shadow">
+      <div className=" w-full bg-background p-6 border border-gray-100 rounded-[8px] upload-shadow flex flex-col gap-[14px]">
         <p className=" text-black-800 text-lg">Seller Information</p>
-        <div className=" grid grid-cols-3">
+        <div className=" grid grid-cols-3 items-center gap-[14px]">
           <div className=" col-span-1">
-            <Input label="Name" placeholder="Enter name" />
+            <Input label="Brand Title" placeholder="Type brand title here.." />
           </div>
           <div className=" col-span-1 ">
             <CustomSelect
-              label="Select frameworks"
+              label="Product Categories"
               options={options}
               onValueChange={setSelectedFrameworks}
               defaultValue={selectedFrameworks}
-              placeholder="Select frameworks"
+              placeholder="Choose a categories"
               variant="inverted"
               // animation={2}
-              maxCount={1}
+              maxCount={2}
             />
+          </div>
+          <div className=" col-span-1">
+            <Input label="Brand link" placeholder="www.****" />
+          </div>
+        </div>
+        <div className=" grid grid-cols-3 items-center gap-[14px]">
+          <div className=" col-span-1">
+            <Input
+              label="Location"
+              placeholder="Add address"
+              leftIcon={<Map className="h-4 w-4" />}
+            />
+          </div>
+          <div className=" col-span-1">
+            <Input label="Email" placeholder="Add email..." />
+          </div>
+          <div className=" col-span-1">
+            <Input
+              label="Phone Number"
+              placeholder="Type phone number here..."
+            />
+          </div>
+        </div>
+        <div className=" col-span-3">
+          <Input
+            label="Yearly Revenue"
+            placeholder="Type your yearly revenue"
+            leftIcon={<DollarSign className="h-4 w-4" />}
+          />
+        </div>
+      </div>
+
+      {/* SELLER PRODUCT INFORMATION  */}
+      <div className=" w-full bg-background p-6 border border-gray-100 rounded-[8px] upload-shadow flex flex-col gap-[14px]">
+        <p className=" text-black-800 text-lg">Seller Product Information</p>
+        <div className=" grid grid-cols-2 items-center gap-[14px]">
+          <div className=" col-span-1">
+            <Input label="Items Stock" placeholder="000" />
+          </div>
+
+          <div className=" col-span-1">
+            <Input label="Product Sells" placeholder="000" />
           </div>
         </div>
       </div>
