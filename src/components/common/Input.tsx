@@ -8,6 +8,7 @@ export interface InputProps
   rightIcon?: React.ReactNode;
   label?: string;
   variant?: "default" | "search";
+  error?: string | boolean; // Can be a string message or boolean
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -21,6 +22,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       label,
       disabled,
       variant = "default",
+      error,
       ...props
     },
     ref
@@ -34,17 +36,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ? "border-transparent bg-background"
         : "border-input",
       disabled && "bg-gray-100",
+      error && "border-red-500 focus:border-red-500", // Add red border when error exists
       className
     );
 
     return (
-      <div className=" grid w-full items-center gap-1.5">
+      <div className="grid w-full items-center gap-1.5">
         {label && (
           <label
             htmlFor={props.id}
             className={cn(
               "text-sm text-black-600 leading-none",
-              disabled && "text-muted-foreground"
+              disabled && "text-muted-foreground",
+              error && "text-red-500" // Make label red when error exists
             )}
           >
             {label}
@@ -55,7 +59,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <span
               className={cn(
                 "absolute left-3",
-                disabled ? "text-muted-foreground" : "text-muted-foreground"
+                disabled ? "text-muted-foreground" : "text-muted-foreground",
+                error && "text-red-500" // Make icon red when error exists
               )}
             >
               {leftIcon}
@@ -67,18 +72,24 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             disabled={disabled}
             {...props}
+            aria-invalid={!!error} // Accessibility improvement
           />
           {rightIcon && (
             <span
               className={cn(
                 "absolute right-3",
-                disabled ? "text-muted-foreground" : "text-muted-foreground"
+                disabled ? "text-muted-foreground" : "text-muted-foreground",
+                error && "text-red-500" // Make icon red when error exists
               )}
             >
               {rightIcon}
             </span>
           )}
         </div>
+        {/* Error message display */}
+        {typeof error === "string" && error && (
+          <p className="text-sm text-red-500">{error}</p>
+        )}
       </div>
     );
   }

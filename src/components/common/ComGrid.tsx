@@ -11,9 +11,7 @@ import {
 import { AgGridReact } from "ag-grid-react";
 import React, {
   forwardRef,
-  useEffect,
   useImperativeHandle,
-  useRef,
   useState,
 } from "react";
 import { Button } from "../ui/button";
@@ -69,6 +67,9 @@ type AgGridProps<T> = {
   onRowDoubleClicked?: (event: any) => void;
   onCellValueChanged?: (record: T, dataIndex: string, value: any) => void;
   onRowSelected?: (record: T) => void;
+  headerContentInclude?: boolean;
+  rowHeight?: number;
+  noRowsMessage?: string; // New prop for custom no rows message
 };
 
 const ComGrid = forwardRef(
@@ -76,29 +77,24 @@ const ComGrid = forwardRef(
     const {
       rowData,
       columnDefs,
-      isFetching,
       title,
       bulkActionButtons,
       headerContent,
       autoSelectFirstRow,
-      onPageChanged,
-      metaData,
       height,
-      rowConfirm,
       rowSelection,
-      isSaved,
-      disabledRowKey,
-      footerChildren,
       onCellValueChanged,
       onRowSelected,
       onRowDoubleClicked,
       gridClassName,
+      rowHeight,
+      headerContentInclude = false,
+      noRowsMessage = "No data available", // Default message
     } = props;
 
-    const [selectedRow, setSelectedRow] = useState<T | null>(null);
     const [gridApi, setGridApi] = useState<GridApi | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 10; // Fixed page size for client-side pagination
+    const pageSize = 10;
 
     // Calculate pagination values based on metaData or defaults
     // useEffect(() => {
@@ -126,7 +122,7 @@ const ComGrid = forwardRef(
 
       if (autoSelectFirstRow && rowData.length > 0) {
         params.api.getDisplayedRowAtIndex(0)?.setSelected(true);
-        setSelectedRow(rowData[0]);
+        // setSelectedRow(rowData[0]);
         if (onRowSelected) onRowSelected(rowData[0]);
       }
     };
@@ -135,7 +131,7 @@ const ComGrid = forwardRef(
     const onSelectionChanged = (event: SelectionChangedEvent) => {
       const selected = event.api.getSelectedRows()[0];
       if (selected) {
-        setSelectedRow(selected);
+        // setSelectedRow(selected);
         if (onRowSelected) onRowSelected(selected);
       }
     };
@@ -252,6 +248,17 @@ const ComGrid = forwardRef(
       return `Showing ${start} - ${end} of ${totalItems}`;
     };
 
+    // Custom no rows overlay component
+    const CustomNoRowsOverlay = () => {
+      return (
+        <div className=" bg-primary-50" style={{ backgroundColor: 'transparent' }}>
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="text-primary-500 text-lg">{noRowsMessage}</div>
+          </div>
+        </div>
+      );
+    };
+
     return (
       <div
         className={`w-full h-full bg-background rounded-t-[8px] ${
@@ -259,9 +266,11 @@ const ComGrid = forwardRef(
         }`}
         style={{ height: height || "400px", width: "100%" }}
       >
-        <div className="w-full flex items-center justify-between px-4 py-4">
-          {renderHeaderContent()}
-        </div>
+        {headerContentInclude && (
+          <div className="w-full flex items-center justify-between px-4 py-4">
+            {renderHeaderContent()}
+          </div>
+        )}
 
         <AgGridReact<T>
           theme={customGridTheme}
@@ -277,9 +286,7 @@ const ComGrid = forwardRef(
               justifyContent: "center",
             },
           }}
-          // paginationPageSize={pageSize}
-          // pagination={true}
-          rowHeight={50}
+          rowHeight={rowHeight || 50}
           editType="fullRow"
           onGridReady={handleGridReady}
           rowSelection={rowSelection}
@@ -287,10 +294,11 @@ const ComGrid = forwardRef(
           onCellEditingStopped={onCellEditStopped}
           onRowDoubleClicked={onRowDoubleClicked}
           suppressCopyRowsToClipboard={props.suppressCopyAction}
+          noRowsOverlayComponent={CustomNoRowsOverlay}
         />
 
         {showPagination && (
-          <div className="w-full flex items-center justify-between px-4 py-4 bg-background border-t border-border rounded-b-[8px]">
+          <div className="w-full h-16 flex items-center justify-between px-4 py-4 bg-background border-t border-border rounded-b-[8px]">
             <div>
               <span className="font-medium text-sm text-black-500">
                 {getShowingRange()}

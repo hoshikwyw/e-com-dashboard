@@ -54,6 +54,8 @@ interface MultiSelectProps
   asChild?: boolean;
   className?: string;
   label?: string;
+  single?: boolean;
+  error?: string | boolean; // Added error prop
 }
 
 export const CustomSelect = React.forwardRef<
@@ -70,30 +72,35 @@ export const CustomSelect = React.forwardRef<
       animation = 0,
       maxCount = 3,
       modalPopover = false,
-      asChild = false,
       label,
       className,
+      single = false,
+      error,
       ...props
     },
     ref
   ) => {
-    const [selectedValues, setSelectedValues] =
-      React.useState<string[]>(defaultValue);
+    const [selectedValues, setSelectedValues] = React.useState<any>(
+      single ? (defaultValue.length > 0 ? [defaultValue[0]] : []) : defaultValue
+    );
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isAnimating, setIsAnimating] = React.useState(false);
 
     const toggleOption = (option: string) => {
-      console.log("Toggling option:", option);
-      const newSelectedValues = selectedValues.includes(option)
-        ? selectedValues.filter((value) => value !== option)
-        : [...selectedValues, option];
+      let newSelectedValues;
+      if (single) {
+        newSelectedValues = selectedValues.includes(option) ? [] : [option];
+      } else {
+        newSelectedValues = selectedValues.includes(option)
+          ? selectedValues.filter((value: any) => value !== option)
+          : [...selectedValues, option];
+      }
       setSelectedValues(newSelectedValues);
       onValueChange(newSelectedValues);
-    };
 
-    const handleClear = () => {
-      setSelectedValues([]);
-      onValueChange([]);
+      if (single) {
+        setIsPopoverOpen(false);
+      }
     };
 
     const handleTogglePopover = () => {
@@ -106,10 +113,20 @@ export const CustomSelect = React.forwardRef<
       onValueChange(newSelectedValues);
     };
 
+    const clearSelection = () => {
+      setSelectedValues([]);
+      onValueChange([]);
+    };
+
     return (
-      <div className=" grid w-full max-w-sm items-center gap-1.5">
+      <div className="grid w-full items-center gap-1.5">
         {label && (
-          <label className={cn("text-sm text-black-600 leading-none")}>
+          <label
+            className={cn(
+              "text-sm text-black-600 leading-none",
+              error && "text-red-500" // Red label when error exists
+            )}
+          >
             {label}
           </label>
         )}
@@ -126,13 +143,15 @@ export const CustomSelect = React.forwardRef<
               className={cn(
                 "flex w-full rounded-md border h-10 items-center justify-between bg-gray-25 hover:bg-inherit [&_svg]:pointer-events-auto",
                 isPopoverOpen ? "border-primary-700" : "",
+                error ? "border-red-500 focus:border-red-500" : "", // Red border when error exists
                 className
               )}
+              aria-invalid={!!error} // Accessibility improvement
             >
               {selectedValues.length > 0 ? (
                 <div className="flex justify-between items-center w-full">
                   <div className="flex flex-wrap items-center gap-1">
-                    {selectedValues.slice(0, maxCount).map((value) => {
+                    {selectedValues.slice(0, maxCount).map((value: any) => {
                       const option = options.find((o) => o.value === value);
                       const IconComponent = option?.icon;
                       return (
@@ -141,7 +160,8 @@ export const CustomSelect = React.forwardRef<
                           className={cn(
                             isAnimating ? "animate-bounce" : "",
                             multiSelectVariants({ variant }),
-                            "flex items-center px-2 py-1 bg-primary-100 text-primary-700 border-none"
+                            "flex items-center px-2 py-1 bg-primary-100 text-primary-700 border-none",
+                            error && "bg-red-100 text-red-700" // Red badge when error exists
                           )}
                           style={{ animationDuration: `${animation}s` }}
                         >
@@ -151,22 +171,25 @@ export const CustomSelect = React.forwardRef<
                           <span className="whitespace-nowrap">
                             {option?.label}
                           </span>
-                          <XCircle
-                            className="ml-2 h-4 w-4 cursor-pointer"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              toggleOption(value);
-                            }}
-                          />
+                          {!single && (
+                            <XCircle
+                              className="ml-2 h-4 w-4 cursor-pointer"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                toggleOption(value);
+                              }}
+                            />
+                          )}
                         </Badge>
                       );
                     })}
-                    {selectedValues.length > maxCount && (
+                    {!single && selectedValues.length > maxCount && (
                       <Badge
                         className={cn(
                           "flex items-center px-2 py-1",
                           isAnimating ? "animate-bounce" : "",
-                          multiSelectVariants({ variant })
+                          multiSelectVariants({ variant }),
+                          error && "bg-red-100 text-red-700" // Red badge when error exists
                         )}
                         style={{ animationDuration: `${animation}s` }}
                       >
@@ -181,14 +204,43 @@ export const CustomSelect = React.forwardRef<
                       </Badge>
                     )}
                   </div>
-                  <ChevronDown className="h-4 mx-2 cursor-pointer text-muted-foreground" />
+                  <div className="flex items-center">
+                    {selectedValues.length > 0 && single && (
+                      <XCircle
+                        className={cn(
+                          "h-4 w-4 cursor-pointer text-muted-foreground mr-2",
+                          error && "text-red-500" // Red icon when error exists
+                        )}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          clearSelection();
+                        }}
+                      />
+                    )}
+                    <ChevronDown
+                      className={cn(
+                        "h-4 cursor-pointer text-muted-foreground",
+                        error && "text-red-500" // Red icon when error exists
+                      )}
+                    />
+                  </div>
                 </div>
               ) : (
                 <div className="flex items-center justify-between w-full mx-auto">
-                  <span className="text-sm text-muted-foreground mx-3">
+                  <span
+                    className={cn(
+                      "text-sm text-muted-foreground mx-3",
+                      error && "text-red-500" // Red placeholder when error exists
+                    )}
+                  >
                     {placeholder}
                   </span>
-                  <ChevronDown className="h-4 cursor-pointer text-muted-foreground mx-2" />
+                  <ChevronDown
+                    className={cn(
+                      "h-4 cursor-pointer text-muted-foreground mx-2",
+                      error && "text-red-500" // Red icon when error exists
+                    )}
+                  />
                 </div>
               )}
             </Button>
@@ -232,11 +284,16 @@ export const CustomSelect = React.forwardRef<
               </CommandList>
             </Command>
           </PopoverContent>
-          {animation > 0 && selectedValues.length > 0 && (
+          {/* Error message display */}
+          {typeof error === "string" && error && (
+            <p className="text-sm text-red-500">{error}</p>
+          )}
+          {!single && animation > 0 && selectedValues.length > 0 && (
             <WandSparkles
               className={cn(
                 "cursor-pointer my-2 text-foreground bg-background w-3 h-3",
-                isAnimating ? "" : "text-muted-foreground"
+                isAnimating ? "" : "text-muted-foreground",
+                error && "text-red-500" // Red icon when error exists
               )}
               onClick={() => setIsAnimating(!isAnimating)}
             />

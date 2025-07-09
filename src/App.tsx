@@ -13,6 +13,10 @@ import {
 } from "./pages";
 import SellerDetailPage from "./components/pages/seller/SellerDetailsPage";
 import AddNewSellerPage from "./components/pages/seller/AddNewSellerPage";
+import AddNewProduct from "./components/pages/product/AddNewProduct";
+import InventoryListPage from "./pages/inventory/InventoryListPage";
+import InventoryEditPage from "./pages/inventory/InventoryEditPage";
+import AddWarehousePage from "./pages/inventory/AddWarehousePage";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -66,6 +70,19 @@ function App() {
               <Route path="/sellers" element={<Sellers />} />
               <Route path="/sellers/:id" element={<SellerDetailPage />} />
               <Route path="/sellers/new" element={<AddNewSellerPage />} />
+              <Route
+                path="/products/add-new-product"
+                element={<AddNewProduct />}
+              />
+              <Route path="/inventory" element={<InventoryListPage />} />
+              <Route
+                path="/inventory/edit/:id"
+                element={<InventoryEditPage />}
+              />
+              <Route
+                path="/inventory/add-new-warehouse"
+                element={<AddWarehousePage />}
+              />
             </Routes>
           </div>
         </main>
